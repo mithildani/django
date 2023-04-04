@@ -769,6 +769,9 @@ class ModelState:
         """Given a model, return a ModelState representing it."""
         # Deconstruct the fields
         fields = []
+        import sys
+        sys.stdout.write(f"\n\n\n      from_model      \n\n\n")
+        sys.stdout.write(f"\n      {model._meta.local_fields}      \n")
         for field in model._meta.local_fields:
             if getattr(field, "remote_field", None) and exclude_rels:
                 continue
@@ -786,6 +789,7 @@ class ModelState:
                         e,
                     )
                 )
+        sys.stdout.write(f"\n      {fields}      \n")
         if not exclude_rels:
             for field in model._meta.local_many_to_many:
                 name = field.name

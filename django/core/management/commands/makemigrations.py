@@ -103,6 +103,9 @@ class Command(BaseCommand):
 
     @no_translations
     def handle(self, *app_labels, **options):
+        sys.stdout.write("\n\n\n       MITHIL      \n\n\n")
+        sys.stdout.write(str(options))
+        sys.stdout.write("\n\n\n       DANI      \n\n\n")
         self.written_files = []
         self.verbosity = options["verbosity"]
         self.interactive = options["interactive"]
@@ -132,6 +135,7 @@ class Command(BaseCommand):
         if has_bad_labels:
             sys.exit(2)
 
+        sys.stdout.write("\n\n\n       1      \n\n\n")
         # Load the current graph state. Pass in None for the connection so
         # the loader doesn't try to resolve replaced migrations from DB.
         loader = MigrationLoader(None, ignore_no_migrations=True)
@@ -163,7 +167,7 @@ class Command(BaseCommand):
         # Before anything else, see if there's conflicting apps and drop out
         # hard if there are any and they don't want to merge
         conflicts = loader.detect_conflicts()
-
+        sys.stdout.write("\n\n\n       2      \n\n\n")
         # If app_labels is specified, filter out conflicting migrations for
         # unspecified apps.
         if app_labels:
@@ -182,7 +186,7 @@ class Command(BaseCommand):
                 "migration graph: (%s).\nTo fix them run "
                 "'python manage.py makemigrations --merge'" % name_str
             )
-
+        sys.stdout.write(f"\n\n\n       3  {loader.graph}    \n\n\n")
         # If they want to merge and there's nothing to merge, then politely exit
         if self.merge and not conflicts:
             self.log("No conflicts detected to merge.")
@@ -206,13 +210,16 @@ class Command(BaseCommand):
                 verbosity=self.verbosity,
                 log=self.log,
             )
+
+        sys.stdout.write(f"\n\n\n      3.5 {apps} | {questioner}      \n\n\n")
+
         # Set up autodetector
         autodetector = MigrationAutodetector(
             loader.project_state(),
             ProjectState.from_apps(apps),
             questioner,
         )
-
+        sys.stdout.write(f"\n\n\n       4   {loader.graph}   \n\n\n")
         # If they want to make an empty migration, make one for each app
         if self.empty:
             if not app_labels:
@@ -229,14 +236,15 @@ class Command(BaseCommand):
             self.write_migration_files(changes)
             return
 
+        sys.stdout.write(f"\n\n\n      4.5 {loader.graph}, {app_labels}, {self.migration_name}      \n\n\n")
         # Detect changes
-        changes = autodetector.changes(
+        changes = autodetector.chaxnges(
             graph=loader.graph,
             trim_to_apps=app_labels or None,
             convert_apps=app_labels or None,
             migration_name=self.migration_name,
         )
-
+        sys.stdout.write(f"\n\n\n       5 {changes}     \n\n\n")
         if not changes:
             # No changes? Tell them.
             if self.verbosity >= 1:
@@ -257,6 +265,7 @@ class Command(BaseCommand):
                 self.write_to_last_migration_files(changes)
             else:
                 self.write_migration_files(changes)
+        sys.stdout.write("\n\n\n       6      \n\n\n")
 
     def write_to_last_migration_files(self, changes):
         loader = MigrationLoader(connections[DEFAULT_DB_ALIAS])

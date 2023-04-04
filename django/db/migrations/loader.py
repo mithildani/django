@@ -227,6 +227,10 @@ class MigrationLoader:
         """
         # Load disk data
         self.load_disk()
+        sys.stdout.write(f"\n\n\n    Migrated   {self.migrated_apps}      \n\n\n")
+        sys.stdout.write(f"\n\n\n    Unmigrated   {self.unmigrated_apps}      \n\n\n")
+        sys.stdout.write(f"\n\n\n    Disk   {self.disk_migrations}      \n\n\n")
+
         # Load database data
         if self.connection is None:
             self.applied_migrations = {}
